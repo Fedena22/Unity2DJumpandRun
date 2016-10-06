@@ -8,7 +8,6 @@ public class HealthControler : MonoBehaviour {
 	public int startLifePoints = 3;
 	float health = 5;
 	int lifePoints = 3 ;
-	Scene scene = SceneManager.GetActiveScene();
 
 	Animator anim;
 	playerController playerController;
@@ -21,7 +20,7 @@ public class HealthControler : MonoBehaviour {
 		anim = GetComponent<Animator>();
 		playerController = GetComponent<playerController> ();
 
-		if(scene.name == "szene1") { //Change if Menue is scene zero
+		if(Application.loadedLevel == 0) { //Change if Menue is scene zero
 			health = startHealth;
 			lifePoints = startLifePoints;
 		} else {
@@ -34,7 +33,8 @@ public class HealthControler : MonoBehaviour {
 	{
 		if (isDamageable) {
 			health -= damage;
-
+			print (health);
+			print ("DMG");
 			health = Mathf.Max (0, health);
 
 			if (!isDead) {
@@ -57,7 +57,7 @@ public class HealthControler : MonoBehaviour {
 
 		playerController.enabled = false;
 		lifePoints--;
-
+		print (lifePoints);
 		if (lifePoints <= 0) {
 			//Startgame
 			Invoke("StartGame",3);
@@ -73,9 +73,9 @@ public class HealthControler : MonoBehaviour {
 		isDamageable = true;
 	}
 
-	void StarteGame()
+	void StartGame()
 	{
-		SceneManager.LoadScene (0);
+		Application.LoadLevel(0);
 	}
 
 
