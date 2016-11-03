@@ -1,13 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class HealthControler : MonoBehaviour {
 
 	public float startHealth = 5;
 	public int startLifePoints = 3;
 	float health = 5;
+    float maxhealth = 5;
 	int lifePoints = 3 ;
+    //GUI
+    public Image healthgui;
+    public Text messageText;
 
 	Animator anim;
 	playerController playerController;
@@ -27,6 +32,8 @@ public class HealthControler : MonoBehaviour {
 			health = PlayerPrefs.GetFloat ("Healt");
 			lifePoints = PlayerPrefs.GetInt ("Lifepoints");
 		}
+        messageText.text = "";
+        UpdateView();
 	}
 	
 	void ApplayDamage(float damage)
@@ -57,10 +64,13 @@ public class HealthControler : MonoBehaviour {
 
 		playerController.enabled = false;
 		lifePoints--;
+        UpdateView();
 		print (lifePoints);
 		if (lifePoints <= 0) {
-			//Startgame
-			Invoke("StartGame",3);
+            //Startgame
+            messageText.text = "Game Over";
+
+            Invoke("StartGame",3);
 		}
 		else
 		{
@@ -93,11 +103,18 @@ public class HealthControler : MonoBehaviour {
 	}
 
 	void Damaging() {
-		//anim.SetTrigger ("Damage");
+        //anim.SetTrigger ("Damage");
+        UpdateView();
 
 	}
 	void OnDestroy() {
 		PlayerPrefs.SetFloat ("Healt", health);
 		PlayerPrefs.SetInt ("Lifepoints", lifePoints);
 	}
+
+    void UpdateView()
+    {
+        healthgui.fillAmount = health / maxhealth;
+
+    }
 }
