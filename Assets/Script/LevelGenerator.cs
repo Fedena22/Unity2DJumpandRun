@@ -6,6 +6,7 @@ public class LevelGenerator : MonoBehaviour {
 
     public string seed;
     public bool useRandomSeed;
+    private string levelSeed;
     public GameObject platfoemTile;
     public GameObject player;
     public GameObject platformGround;
@@ -34,21 +35,22 @@ public class LevelGenerator : MonoBehaviour {
     // Use this for initialization
     void Start() {
         //Platform p = new Platform(1, 5, 2, true);
+        if(levelSeed == null)
         GenerateLevel();
     }
 
     public void GenerateLevel()
     {
-        //Random generator
-        InitRandomObject();
-        //Die Plattform ertellen (Start of Platform End of Platfoem...
-        CreatDefaultPlatforms();
-        //Which platform is danger
-        SetIsDanger();
-        //addons erzeugen
-        Debug.Log("Addpns:" + addOnObjects.Count);
-        //SetAddOnObjects();
-        //Lelvel Erzeugen
+       //Random generator
+       InitRandomObject();
+       //Die Plattform ertellen (Start of Platform End of Platfoem...
+       CreatDefaultPlatforms();
+       //Which platform is danger
+       SetIsDanger();
+       //addons erzeugen
+       Debug.Log("Addpns:" + addOnObjects.Count);
+       SetAddOnObjects();
+       //Lelvel Erzeugen
         BuildLevel();
     }
 
@@ -121,9 +123,11 @@ public class LevelGenerator : MonoBehaviour {
     void InitRandomObject()
     {
         if (useRandomSeed)
-            seed = Time.time.ToString();
+            seed = System.DateTime.Now.ToString();
+  
         pseudoRandom = new System.Random(seed.GetHashCode());
 
+        levelSeed = pseudoRandom.ToString();
     }
 
     void CreatDefaultPlatforms()
@@ -149,7 +153,7 @@ public class LevelGenerator : MonoBehaviour {
             height = Mathf.Max(height, minHeight);
             height = Mathf.Min(height, maxHeight);
 
-            Platform current = new Platform(currentStartIndex, GetRandomNumber(minLength, maxLength + 1), height, false);
+            Platform current = new Platform(currentStartIndex, GetRandomNumber(minLength, maxLength), height, false);
             platforms.Add(current);
             currentStartIndex += current.length;
 
@@ -158,12 +162,16 @@ public class LevelGenerator : MonoBehaviour {
 
     void SetIsDanger()
     {
-        List<int> indices = GetRandomNumbers(0, quantity, Mathf.RoundToInt(complexity * quantity));
-
-        foreach(int current in indices)
+        if (complexity != 0)
         {
-            platforms[current].isDanger = true;
-            Debug.Log(current);
+            List<int> indices = GetRandomNumbers(0, quantity, Mathf.RoundToInt(complexity * quantity));
+
+            foreach (int current in indices)
+            {
+                platforms[current].isDanger = true;
+                
+                Debug.Log(current);
+            }
         }
     }
 
@@ -172,14 +180,14 @@ public class LevelGenerator : MonoBehaviour {
         BoxCollider2D coll = go.AddComponent<BoxCollider2D>();
 
         Vector2 size;
-        size.x = current.length - (current.isDanger ? 1:0);
+        size.x = current.length - (current.isDanger ? 0.33f:0);
         size.y = current.isDanger ? 1 : current.heigth + 5;
 
         coll.size = size;
 
         Vector2 offset;
 
-        offset.x = size.x / 2 - 0.5f;
+        offset.x = size.x / 2 - 0.6f;
         offset.y = current.isDanger ? 0 : -size.y / 2 + 0.5F;
 
         coll.offset = offset;
@@ -224,9 +232,9 @@ void PlaceGroundTiles(Platform current)
     {
         Vector3 tilePos = new Vector3(-10, 0, 0);
 
-        for (int i = current.startIndex -10; i < current.startIndex + current.length +10; i++)
+        for (int i = current.startIndex -10; i < current.startIndex + current.length +15; i++)
         {
-            for (int c = current.heigth - 5; c > -10; c--)
+            for (int c = current.heigth - 5; c > -15; c--)
             {
                 tilePos.x = i;
                 tilePos.y = c;
@@ -235,7 +243,7 @@ void PlaceGroundTiles(Platform current)
             }
         }
     }
-    List<int> GetRandomNumbers(int min, int max, int quatity)
+    List<int> GetRandomNumbers(int min, int max, int qua)
     {
         List<int> result = new List<int>();
         List<int> buffer = new List<int>();
@@ -245,7 +253,7 @@ void PlaceGroundTiles(Platform current)
             buffer.Add(i);
         }
 
-        for (int i = 0; i < quantity; i++) 
+        for (int i = 0; i < qua; i++) 
         {
             int temp = GetRandomNumber(0, buffer.Count);
             result.Add(buffer[temp]);

@@ -7,7 +7,7 @@ public class HealthControler : MonoBehaviour {
 
 	public float startHealth = 5;
 	public int startLifePoints = 3;
-	float health = 5;
+	public float health = 5;
     float maxhealth = 5;
 	int lifePoints = 3 ;
     //GUI
